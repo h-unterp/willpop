@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:willpop/providers.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const ProviderScope(
+    child: MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -72,12 +74,16 @@ class _Widg2State extends ConsumerState<Widg2> {
         body: WillPopScope(
             child: TextButton(
                 child: Center(
-                    child: Text("$pro1 : $pro2",
+                    child: Text("${widget.title} \n $pro1 \n $pro2",
                         style: const TextStyle(fontSize: 40))),
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  Navigator.of(context)
+                      .push(Widg2.getRoute(context, "from widg2"));
                 }),
             onWillPop: () {
+              ref.read(provider1.notifier).doAsync("pro1.willpop");
+              ref.read(provider2.notifier).doAsync("pro2.willpop");
+              Navigator.of(context).pop();
               return Future.value(true);
             }));
   }
